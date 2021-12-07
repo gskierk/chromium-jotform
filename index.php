@@ -73,7 +73,7 @@ try {
     )->getReturnValue(1000);
 
     $crawler = new Crawler($timeSlotBody);
-    $availableTimeSlots = $crawler->filter('.checkbox')->each(fn (Crawler $listItem): string => $listItem->text());
+    $availableTimeSlots = $crawler->filter('.checkbox:not(.line-through)')->each(fn (Crawler $listItem): string => $listItem->text());
 
     $screenshot = $page->screenshot();
 
@@ -88,10 +88,10 @@ try {
                 $_SERVER['SMTP_TO_ADDITIONAL'] ?? null
             ])
         );
-        
+
         if (count($to) > 0) {
             $email = (new Email())
-                ->from($_SERVER[ 'SMTP_FROM' ] ?? null)
+                ->from($_SERVER['SMTP_FROM'] ?? null)
                 ->to(...$to)
                 ->subject('Powiadomienie z eu.jotform.com/211681414001339')
                 ->html(
@@ -103,7 +103,7 @@ try {
                 Transport::fromDsn($dsn))
             )->send($email);
 
-            echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT)) . PHP_EOL . PHP_EOL;
+            echo sprintf('Email został wysłany do \'%s\'', json_encode($to, JSON_PRETTY_PRINT)) . PHP_EOL . PHP_EOL;
         }
     }
 
@@ -120,6 +120,8 @@ try {
 
         echo sprintf('Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link) . PHP_EOL . PHP_EOL;
     }
+
+    echo 'Skrypt zakończony' . PHP_EOL . PHP_EOL;
 } finally {
     $browser->close();
 }
