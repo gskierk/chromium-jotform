@@ -6,6 +6,7 @@ use HeadlessChromium\Dom\Node;
 use Laminas\Uri\Uri;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
@@ -99,6 +100,18 @@ try {
         )->send($email);
 
         echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT));
+    } else {
+        $imgurClient = HttpClient::createForBaseUri('https://api.imgur.com');
+        $response = $imgurClient->request('POST', '/3/image', [
+            'headers' => [
+                'Authorization' => sprintf('Client-ID %s', $_SERVER['IMGUR_CLIENT_ID'] ?? null)
+            ],
+            'body' => [
+                'image' => $screenshotEmpty = $page->screenshot()->getBase64()
+            ]
+        ]);
+
+        echo sprintf('Brak danych? Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link);
     }
 } finally {
     $browser->close();
