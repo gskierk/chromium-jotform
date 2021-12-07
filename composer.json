@@ -1,0 +1,17 @@
+{
+    "name": "grzegorzskierkowski/chromium-jotform",
+    "require": {
+        "chrome-php/chrome": "^1.2",
+        "laminas/laminas-uri": "^2.9",
+        "symfony/dom-crawler": "^5.4",
+        "symfony/css-selector": "^5.4",
+        "symfony/mailer": "^5.4",
+        "symfony/dotenv": "^5.4"
+    },
+    "authors": [
+        {
+            "name": "Skierkowski Grzegorz",
+            "email": "42655090+gskierk@users.noreply.github.com"
+        }
+    ]
+}
