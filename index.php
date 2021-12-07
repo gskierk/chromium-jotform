@@ -1,5 +1,6 @@
 <?php
 
+use Campo\UserAgent;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Dom\Node;
 use Laminas\Uri\Uri;
@@ -37,6 +38,7 @@ $dsn = vsprintf('smtp://%s:%s@%s:%s', [
 $browserFactory = new BrowserFactory($_SERVER['CHROME_BINARY'] ?? null);
 
 $browser = $browserFactory->createBrowser([
+    'userAgent' => UserAgent::random(),
     'customFlags' => [
         '--no-sandbox',
         '--disable-web-security'
