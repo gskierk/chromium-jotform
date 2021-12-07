@@ -96,7 +96,7 @@ try {
             Transport::fromDsn($dsn))
         )->send($email);
 
-        echo sprintf('Email to \'%s\' has been sent out!', $_SERVER['SMTP_TO']);
+        echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT));
     }
 } finally {
     $browser->close();
