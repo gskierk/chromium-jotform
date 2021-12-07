@@ -74,7 +74,7 @@ try {
     $crawler = new Crawler($timeSlotBody);
     $availableTimeSlots = $crawler->filter('.checkbox')->each(fn (Crawler $listItem): string => $listItem->text());
 
-    $screenshot = $screenshotEmpty = $page->screenshot()->getBase64();
+    $screenshot = $page->screenshot();
 
     if (count($availableTimeSlots) > 0) {
         echo json_encode($availableTimeSlots, JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
@@ -86,6 +86,8 @@ try {
             ])
         );
 
+        $screenshot->saveToFile(__DIR__ . '/screenshot.png');
+
         $email = (new Email())
             ->from($_SERVER['SMTP_FROM'] ?? null)
             ->to(...$to)
@@ -93,7 +95,7 @@ try {
             ->html(
                 implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
             )
-            ->attach($screenshot);
+            ->attachFromPath(__DIR__ . '/screenshot.png');
 
         (new Mailer(
             Transport::fromDsn($dsn))
@@ -109,7 +111,7 @@ try {
                 'Authorization' => sprintf('Client-ID %s', $_SERVER['IMGUR_CLIENT_ID'])
             ],
             'body' => [
-                'image' => $screenshot
+                'image' => $screenshot->getBase64()
             ]
         ]);
 
