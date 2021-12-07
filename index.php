@@ -99,7 +99,7 @@ try {
             Transport::fromDsn($dsn))
         )->send($email);
 
-        echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT));
+        echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT)) . PHP_EOL . PHP_EOL;
     }
 
     if (array_key_exists('IMGUR_CLIENT_ID', $_SERVER)) {
@@ -113,7 +113,7 @@ try {
             ]
         ]);
 
-        echo sprintf('Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link);
+        echo sprintf('Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link) . PHP_EOL . PHP_EOL;
     }
 } finally {
     $browser->close();
