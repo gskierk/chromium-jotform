@@ -40,6 +40,7 @@ $browserFactory = new BrowserFactory($_SERVER['CHROME_BINARY'] ?? null);
 
 $browser = $browserFactory->createBrowser([
     'userAgent' => UserAgent::random(),
+    'windowSize' => [1080, 4320],
     'customFlags' => [
         '--no-sandbox',
         '--disable-web-security'
