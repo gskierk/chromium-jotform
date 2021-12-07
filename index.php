@@ -34,7 +34,9 @@ $dsn = vsprintf('smtp://%s:%s@%s:%s', [
     $_SERVER['SMTP_PORT']
 ]);
 
-$browser = (new BrowserFactory())->createBrowser([
+$browserFactory = new BrowserFactory($_SERVER['CHROME_BINARY'] ?? null);
+
+$browser = $browserFactory->createBrowser([
     'customFlags' => [
         '--disable-web-security'
     ]
