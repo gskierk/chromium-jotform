@@ -76,9 +76,16 @@ try {
 
         $page->screenshot()->saveToFile(__DIR__ . '/screenshot.png');
 
+        $to = array_values(
+            array_filter([
+                $_SERVER['SMTP_TO'],
+                $_SERVER['SMTP_TO_ADDITIONAL']
+            ])
+        );
+
         $email = (new Email())
             ->from($_SERVER['SMTP_FROM'])
-            ->to($_SERVER['SMTP_TO'])
+            ->to($to)
             ->subject('Powiadomienie z eu.jotform.com/211681414001339')
             ->html(
                 implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
