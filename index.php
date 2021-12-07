@@ -80,29 +80,31 @@ try {
     if (count($availableTimeSlots) > 0) {
         echo json_encode($availableTimeSlots, JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
 
+        $screenshot->saveToFile(__DIR__ . '/screenshot.png');
+
         $to = array_values(
             array_filter([
                 $_SERVER['SMTP_TO'] ?? null,
                 $_SERVER['SMTP_TO_ADDITIONAL'] ?? null
             ])
         );
+        
+        if (count($to) > 0) {
+            $email = (new Email())
+                ->from($_SERVER[ 'SMTP_FROM' ] ?? null)
+                ->to(...$to)
+                ->subject('Powiadomienie z eu.jotform.com/211681414001339')
+                ->html(
+                    implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
+                )
+                ->attachFromPath(__DIR__ . '/screenshot.png');
 
-        $screenshot->saveToFile(__DIR__ . '/screenshot.png');
+            (new Mailer(
+                Transport::fromDsn($dsn))
+            )->send($email);
 
-        $email = (new Email())
-            ->from($_SERVER['SMTP_FROM'] ?? null)
-            ->to(...$to)
-            ->subject('Powiadomienie z eu.jotform.com/211681414001339')
-            ->html(
-                implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
-            )
-            ->attachFromPath(__DIR__ . '/screenshot.png');
-
-        (new Mailer(
-            Transport::fromDsn($dsn))
-        )->send($email);
-
-        echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT)) . PHP_EOL . PHP_EOL;
+            echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT)) . PHP_EOL . PHP_EOL;
+        }
     }
 
     if (array_key_exists('IMGUR_CLIENT_ID', $_SERVER)) {
