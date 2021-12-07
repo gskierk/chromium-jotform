@@ -38,6 +38,7 @@ $browserFactory = new BrowserFactory($_SERVER['CHROME_BINARY'] ?? null);
 
 $browser = $browserFactory->createBrowser([
     'customFlags' => [
+        '--no-sandbox',
         '--disable-web-security'
     ]
 ]);
@@ -71,6 +72,8 @@ try {
     $availableTimeSlots = $crawler->filter('.checkbox')->each(fn (Crawler $listItem): string => $listItem->text());
 
     if (count($availableTimeSlots) > 0) {
+        echo json_encode($availableTimeSlots, JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
+
         $page->screenshot()->saveToFile(__DIR__ . '/screenshot.png');
 
         $email = (new Email())
@@ -85,6 +88,8 @@ try {
         (new Mailer(
             Transport::fromDsn($dsn))
         )->send($email);
+
+        echo sprintf('Email to \'%s\' has been sent out!', $_SERVER['SMTP_TO']);
     }
 } finally {
     $browser->close();
