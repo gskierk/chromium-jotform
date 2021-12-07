@@ -28,10 +28,10 @@ $uri = (new Uri())
     ->toString();
 
 $dsn = vsprintf('smtp://%s:%s@%s:%s', [
-    $_SERVER['SMTP_USERNAME'],
-    $_SERVER['SMTP_PASSWORD'],
-    $_SERVER['SMTP_SERVER'],
-    $_SERVER['SMTP_PORT']
+    $_SERVER['SMTP_USERNAME'] ?? null,
+    $_SERVER['SMTP_PASSWORD'] ?? null,
+    $_SERVER['SMTP_SERVER'] ?? null,
+    $_SERVER['SMTP_PORT'] ?? null
 ]);
 
 $browserFactory = new BrowserFactory($_SERVER['CHROME_BINARY'] ?? null);
@@ -78,14 +78,14 @@ try {
 
         $to = array_values(
             array_filter([
-                $_SERVER['SMTP_TO'],
-                $_SERVER['SMTP_TO_ADDITIONAL']
+                $_SERVER['SMTP_TO'] ?? null,
+                $_SERVER['SMTP_TO_ADDITIONAL'] ?? null
             ])
         );
 
         $email = (new Email())
-            ->from($_SERVER['SMTP_FROM'])
-            ->to($to)
+            ->from($_SERVER['SMTP_FROM'] ?? null)
+            ->to(...$to)
             ->subject('Powiadomienie z eu.jotform.com/211681414001339')
             ->html(
                 implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
