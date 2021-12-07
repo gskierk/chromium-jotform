@@ -74,10 +74,10 @@ try {
     $crawler = new Crawler($timeSlotBody);
     $availableTimeSlots = $crawler->filter('.checkbox')->each(fn (Crawler $listItem): string => $listItem->text());
 
+    $screenshot = $screenshotEmpty = $page->screenshot()->getBase64();
+
     if (count($availableTimeSlots) > 0) {
         echo json_encode($availableTimeSlots, JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
-
-        $page->screenshot()->saveToFile(__DIR__ . '/screenshot.png');
 
         $to = array_values(
             array_filter([
@@ -93,25 +93,27 @@ try {
             ->html(
                 implode('', array_map(fn(string $availableTimeSlot): string => ($availableTimeSlot . '</br><br/>'), $availableTimeSlots))
             )
-            ->attachFromPath(__DIR__ . '/screenshot.png');
+            ->attach($screenshot);
 
         (new Mailer(
             Transport::fromDsn($dsn))
         )->send($email);
 
         echo sprintf('Email to \'%s\' has been sent out!', json_encode($to, JSON_PRETTY_PRINT));
-    } else {
+    }
+
+    if (array_key_exists('IMGUR_CLIENT_ID', $_SERVER)) {
         $imgurClient = HttpClient::createForBaseUri('https://api.imgur.com');
         $response = $imgurClient->request('POST', '/3/image', [
             'headers' => [
-                'Authorization' => sprintf('Client-ID %s', $_SERVER['IMGUR_CLIENT_ID'] ?? null)
+                'Authorization' => sprintf('Client-ID %s', $_SERVER['IMGUR_CLIENT_ID'])
             ],
             'body' => [
-                'image' => $screenshotEmpty = $page->screenshot()->getBase64()
+                'image' => $screenshot
             ]
         ]);
 
-        echo sprintf('Brak danych? Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link);
+        echo sprintf('Screenshot możesz zobaczyć pod nastepującym adresem: \'%s\'', json_decode($response->getContent())->data->link);
     }
 } finally {
     $browser->close();
