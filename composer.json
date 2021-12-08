@@ -8,12 +8,18 @@
         "symfony/mailer": "^5.4",
         "symfony/dotenv": "^5.4",
         "campo/random-user-agent": "^1.3",
-        "symfony/http-client": "^5.4"
+        "symfony/http-client": "^5.4",
+        "php-di/php-di": "^6.3"
     },
     "authors": [
         {
             "name": "Skierkowski Grzegorz",
             "email": "42655090+gskierk@users.noreply.github.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "ChromiumJotForm\\Task\\": "task/"
+        }
+    }
 }
