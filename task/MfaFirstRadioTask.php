@@ -22,7 +22,7 @@ final class MfaFirstRadioTask extends AbstractRadioTask
 
             $this
                 ->clickElement($page, '#input_106_0', 1)
-                ->clickElement($page, '#input_81_0', 5);
+                ->clickElement($page, '#input_81_0', $_ENV['WAIT_FOR_TIME_SLOTS_SEC'] ?? 10);
 
             $availableTimeSlots = $this->getAvailableTimeSlots($page, 'customFieldFrame_102');
 
