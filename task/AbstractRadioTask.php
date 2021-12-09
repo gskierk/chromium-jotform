@@ -31,7 +31,9 @@ abstract class AbstractRadioTask
 
         $crawler = new Crawler($timeSlotsBody);
 
-        return $crawler->filter('.checkbox:not(.line-through)')->each(fn (Crawler $listItem): string => $listItem->text());
+        $texts = $crawler->filter('.checkbox')->each(fn (Crawler $listItem): string => $listItem->text());
+
+        return array_filter($texts, fn (string $text): bool => $text !== 'keine Dienste mit MFA vorhanden');
     }
 
     protected function sendEmail(MailerInterface $mailer, string $from, array $to, array $availableTimeSlots, PageScreenshot $screenshot): void
