@@ -1,10 +1,8 @@
 <?php
 
-use Campo\UserAgent;
-use HeadlessChromium\Browser\ProcessAwareBrowser;
-use HeadlessChromium\BrowserFactory;
 use Laminas\Uri\Uri;
 use Laminas\Uri\UriInterface;
+use Predis\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -43,5 +41,8 @@ return [
                 'Authorization' => sprintf('Client-ID %s', $_ENV['IMGUR_CLIENT_ID'])
             ]
         ]);
+    },
+    Client::class => function (): Client {
+        return new Client();
     }
 ];

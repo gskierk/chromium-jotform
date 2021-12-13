@@ -5,6 +5,7 @@ namespace ChromiumJotForm\Task;
 use HeadlessChromium\Dom\Node;
 use HeadlessChromium\Page;
 use HeadlessChromium\PageUtils\PageScreenshot;
+use Predis\Client;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -63,5 +64,26 @@ abstract class AbstractRadioTask
         ]);
 
         return json_decode($response->getContent())->data->link;
+    }
+
+    protected function redisTimeSlotsAlreadyReported (Client $redis, array $timeSlots): bool
+    {
+        $previousTimeSlots = $redis->get('PREVIOUS_TIME_SLOTS');
+        if (!$previousTimeSlots) {
+            return false;
+        }
+
+        $previousTimeSlots = json_decode($previousTimeSlots);
+
+        if (array_diff($previousTimeSlots, $timeSlots) == array_diff($timeSlots, $previousTimeSlots)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function redisStoreTimeSlots (Client $redis, array $timeSlots): void
+    {
+        $redis->set('PREVIOUS_TIME_SLOTS', json_encode($timeSlots));
     }
 }

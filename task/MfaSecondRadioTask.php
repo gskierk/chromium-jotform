@@ -4,12 +4,13 @@ namespace ChromiumJotForm\Task;
 
 use HeadlessChromium\Browser\ProcessAwareBrowser;
 use Laminas\Uri\UriInterface;
+use Predis\Client;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class MfaSecondRadioTask extends AbstractRadioTask
 {
-    public function __invoke(HttpClientInterface $httpClient, MailerInterface $mailer, ProcessAwareBrowser $browser, UriInterface $uri, string $from, array $to = []): void
+    public function __invoke(Client $redis, HttpClientInterface $httpClient, MailerInterface $mailer, ProcessAwareBrowser $browser, UriInterface $uri, string $from, array $to = []): void
     {
         echo MfaSecondRadioTask::class . PHP_EOL;
         echo '======' . PHP_EOL . PHP_EOL;
