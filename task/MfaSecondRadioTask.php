@@ -30,8 +30,12 @@ final class MfaSecondRadioTask extends AbstractRadioTask
             $screenshot = $page->screenshot();
 
             if (count($availableTimeSlots) > 0) {
-                $this->sendEmail($mailer, $from, $to, $availableTimeSlots, $screenshot);
+                if (!$this->redisTimeSlotsAlreadyReported($redis, $availableTimeSlots)) {
+                    $this->sendEmail($mailer, $from, $to, $availableTimeSlots, $screenshot);
+                }
             }
+
+            $this->redisStoreTimeSlots($redis, $availableTimeSlots);
 
             $screenshotLink = $this->getScreenshotLink($httpClient, $screenshot);
 
