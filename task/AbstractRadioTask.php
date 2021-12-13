@@ -68,7 +68,9 @@ abstract class AbstractRadioTask
 
     protected function redisTimeSlotsAlreadyReported (Client $redis, array $timeSlots): bool
     {
-        $previousTimeSlots = $redis->get('PREVIOUS_TIME_SLOTS');
+        $key = $this->getRedisKey();
+        
+        $previousTimeSlots = $redis->get($key);
         if (!$previousTimeSlots) {
             return false;
         }
@@ -84,6 +86,13 @@ abstract class AbstractRadioTask
 
     protected function redisStoreTimeSlots (Client $redis, array $timeSlots): void
     {
-        $redis->set('PREVIOUS_TIME_SLOTS', json_encode($timeSlots));
+        $key = $this->getRedisKey();
+
+        $redis->set($key, json_encode($timeSlots));
+    }
+
+    private function getRedisKey(): string
+    {
+        return base64_encode(static::class);
     }
 }
